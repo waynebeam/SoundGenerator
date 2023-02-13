@@ -1,3 +1,28 @@
+
+export function playSound(...notes) {
+    notes.forEach(note=>{
+        playBasicSound(note.note, note.duration, note.oscType);
+    })
+
+    if(!notes.length) playBasicSound();
+}
+
+function playBasicSound(note = "C4", duration = 1, oscType = "sine"){
+    const frequency = noteFrequencies[note];
+    const audioContext = new AudioContext();
+    const gain = audioContext.createGain();
+    const oscillator = audioContext.createOscillator();
+    gain.connect(audioContext.destination);
+    oscillator.connect(gain);
+
+    oscillator.frequency.value = frequency;
+    
+    oscillator.start();
+    oscillator.stop(duration);
+    oscillator.type = oscType;
+    gain.gain.exponentialRampToValueAtTime(.00001,audioContext.currentTime + duration);
+}
+
 const noteFrequencies = {
     'C0': 16.35,
     'C#0': 17.32,
