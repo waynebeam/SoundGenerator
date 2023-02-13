@@ -1,6 +1,6 @@
 
 export function playSound(...notes) {
-    notes.forEach(note=>{
+    notes.forEach((note, i)=>{
         playBasicSound(note.note, note.duration, note.oscType);
     })
 
@@ -8,6 +8,7 @@ export function playSound(...notes) {
 }
 
 function playBasicSound(note = "C4", duration = 1, oscType = "sine"){
+    console.log("played");
     const frequency = noteFrequencies[note];
     const audioContext = new AudioContext();
     const gain = audioContext.createGain();
