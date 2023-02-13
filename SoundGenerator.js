@@ -1,26 +1,33 @@
 
 export function playSound(...notes) {
-    notes.forEach((note, i)=>{
-        playBasicSound(note.note, note.duration, note.oscType);
-    })
+    // notes.forEach((note, i)=>{
+    //    let time = setTimeout(()=>{
+    //         playBasicSound();
+    //     },500*i);
+    // })
+    const audioContext = new AudioContext();
+    for (let i=0; i<notes.length; i++){
+        let note = notes[i];
+        setTimeout(()=>{
+            playBasicSound(audioContext, note.note);
+        },500*i);
+    }
 
-    if(!notes.length) playBasicSound();
+    //if(!notes.length) playBasicSound();
 }
 
-function playBasicSound(note = "C4", duration = 1, oscType = "sine"){
-    console.log("played");
+function playBasicSound(audioContext, note = "C4", duration = 1, oscType = "sine"){
     const frequency = noteFrequencies[note];
-    const audioContext = new AudioContext();
+    
     const gain = audioContext.createGain();
     const oscillator = audioContext.createOscillator();
     gain.connect(audioContext.destination);
     oscillator.connect(gain);
 
+    oscillator.type = oscType;
     oscillator.frequency.value = frequency;
     
     oscillator.start();
-    oscillator.stop(duration);
-    oscillator.type = oscType;
     gain.gain.exponentialRampToValueAtTime(.00001,audioContext.currentTime + duration);
 }
 
