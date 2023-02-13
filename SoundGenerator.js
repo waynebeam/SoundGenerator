@@ -1,24 +1,26 @@
 
+const audioContext = new AudioContext();
+
+
 export function playSound(...notes) {
-    // notes.forEach((note, i)=>{
-    //    let time = setTimeout(()=>{
-    //         playBasicSound();
-    //     },500*i);
-    // })
-    const audioContext = new AudioContext();
-    for (let i=0; i<notes.length; i++){
-        let note = notes[i];
-        setTimeout(()=>{
-            playBasicSound(audioContext, note.note);
-        },500*i);
-    }
+    notes.forEach((note, i) => {
+        if (note.msToNextNote) {
+            let time = setTimeout(() => {
+                playBasicSound(audioContext, note.note, note.duration, note.oscType);
+            }, note.msToNextNote);
+        }
+        else {
+            playBasicSound(audioContext, note.note, note.duration, note.oscType);
+        }
+    })
+
 
     //if(!notes.length) playBasicSound();
 }
 
-function playBasicSound(audioContext, note = "C4", duration = 1, oscType = "sine"){
+function playBasicSound(audioContext, note = "C4", duration = 1, oscType = "sine") {
     const frequency = noteFrequencies[note];
-    
+
     const gain = audioContext.createGain();
     const oscillator = audioContext.createOscillator();
     gain.connect(audioContext.destination);
@@ -26,9 +28,9 @@ function playBasicSound(audioContext, note = "C4", duration = 1, oscType = "sine
 
     oscillator.type = oscType;
     oscillator.frequency.value = frequency;
-    
+
     oscillator.start();
-    gain.gain.exponentialRampToValueAtTime(.00001,audioContext.currentTime + duration);
+    gain.gain.exponentialRampToValueAtTime(.00001, audioContext.currentTime + duration);
 }
 
 const noteFrequencies = {
