@@ -7,12 +7,10 @@ export function playSound(...notes) {
         if (note.msToNextNote) {
             let time = setTimeout(() => {
                 let oscAndGain = playBasicSound(note.note, note.duration, note.oscType);
-                stopSound(oscAndGain);
             }, note.msToNextNote);
         }
         else {
             let oscAndGain = playBasicSound(note.note, note.duration, note.oscType);
-            stopSound(oscAndGain);
         }
     })
 
@@ -24,6 +22,7 @@ function playBasicSound(note = "C4", duration = 1, oscType = "sine") {
     const frequency = noteFrequencies[note];
 
     const gain = audioContext.createGain();
+    gain.gain.value = .5;
     const oscillator = audioContext.createOscillator();
     gain.connect(audioContext.destination);
     oscillator.connect(gain);
@@ -32,15 +31,10 @@ function playBasicSound(note = "C4", duration = 1, oscType = "sine") {
     oscillator.frequency.value = frequency;
 
     oscillator.start();
-    return {oscillator: oscillator, gain: gain};
-}
-
-function stopSound(oscAndGain, duration = 1) {
-    let oscillator = oscAndGain.oscillator;
-    let gain = oscAndGain.gain;
     oscillator.stop(audioContext.currentTime + duration);
     gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration);
 }
+
 
 const noteFrequencies = {
     'C0': 16.35,
