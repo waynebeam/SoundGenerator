@@ -30,7 +30,8 @@ function playBasicSound(audioContext, note = "C4", duration = 1, oscType = "sine
     oscillator.frequency.value = frequency;
 
     oscillator.start();
-    gain.gain.exponentialRampToValueAtTime(.00001, audioContext.currentTime + duration);
+    oscillator.stop(audioContext.currentTime + duration);
+    gain.gain.exponentialRampToValueAtTime(.01, audioContext.currentTime + duration);
 }
 
 const noteFrequencies = {
